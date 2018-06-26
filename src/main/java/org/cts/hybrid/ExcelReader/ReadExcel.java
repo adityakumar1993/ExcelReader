@@ -43,7 +43,7 @@ public class ReadExcel {
 		xssfSheet = xssfWorkbook.getSheet(sheetName);
 	}
 
-	static Object[][] readData(String fileName, String sheetName) {
+	 public static Object[][] readData(String fileName, String sheetName) {
 		List<Object[]> results = new ArrayList<Object[]>();
 		try {
 			setup(fileName, sheetName);
