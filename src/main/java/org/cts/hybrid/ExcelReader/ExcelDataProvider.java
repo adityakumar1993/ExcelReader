@@ -11,7 +11,7 @@ public class ExcelDataProvider {
 	private String excelName;
 	private String sheetName;
 
-	@BeforeClass
+	@BeforeClass(alwaysRun=true)
 	public void getExcelDetails() {
 		Class<?> obj = getClass();
 		if (obj.isAnnotationPresent(ExcelDetails.class)) {
