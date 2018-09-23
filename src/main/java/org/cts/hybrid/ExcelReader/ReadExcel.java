@@ -2,7 +2,6 @@ package org.cts.hybrid.ExcelReader;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,13 +36,15 @@ public class ReadExcel {
 		} else if (xlsxFile.exists()) {
 			fis = new FileInputStream(xlsxFile);
 		} else {
-			throw new FileNotFoundException("File doesn't exists:");
+			throw new IOException("ExcelDetails annotation may be missing or excel file/sheet doesn't exists.");
 		}
 		xssfWorkbook = new XSSFWorkbook(fis);
 		xssfSheet = xssfWorkbook.getSheet(sheetName);
 	}
 
-	 public static Object[][] readData(String fileName, String sheetName) {
+	public static Object[][] readData(String[] excelInfo) {
+		String fileName = excelInfo[0];
+		String sheetName = excelInfo[1];
 		List<Object[]> results = new ArrayList<Object[]>();
 		try {
 			setup(fileName, sheetName);
