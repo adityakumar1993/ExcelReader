@@ -43,11 +43,11 @@ public class ReadExcel {
 	}
 
 	public static Object[][] readData(String[] excelInfo) {
-		String fileName = excelInfo[0];
+		String excelName = excelInfo[0];
 		String sheetName = excelInfo[1];
 		List<Object[]> results = new ArrayList<Object[]>();
 		try {
-			setup(fileName, sheetName);
+			setup(excelName, sheetName);
 			int numRows = xssfSheet.getLastRowNum();
 			for (int i = 1; i <= numRows; i++) {
 				Map<String, String> inputValues = getHashMapDataFromRow(xssfSheet, i);
@@ -66,8 +66,30 @@ public class ReadExcel {
 		return results.toArray(new Object[0][]);
 	}
 
-	private static Map<String, String> getHashMapDataFromRow(Sheet sheet, int rowIndex) {
-		Map<String, String> results = new HashMap<String, String>();
+	public static List<HashMap<String, String>> readData(String excelName, String sheetName) {
+		List<HashMap<String, String>> excelData = new ArrayList<HashMap<String, String>>();
+		try {
+			setup(excelName, sheetName);
+			int numRows = xssfSheet.getLastRowNum();
+			for (int i = 1; i <= numRows; i++) {
+				HashMap<String, String> inputValues = getHashMapDataFromRow(xssfSheet, i);
+				if (inputValues == null) {
+					break;
+				}
+				excelData.add(inputValues);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		finally {
+			IOUtils.closeQuietly(fis);
+		}
+		return excelData;
+	}
+
+	private static HashMap<String, String> getHashMapDataFromRow(Sheet sheet, int rowIndex) {
+		HashMap<String, String> results = new HashMap<String, String>();
 		String[] columnHeaders = getDataFromRow(sheet, 0);
 		String[] valuesFromRow = getDataFromRow(sheet, rowIndex);
 		if (valuesFromRow == null) {
