@@ -11,7 +11,6 @@ import org.testng.annotations.Test;
 @ExcelDetails
 public class ReadExcelData {
 
-	// @ExcelDetails(excelName = "Book1")
 	@Test(dataProvider = "data")
 	public void readExcelData_Test(Map<String, String> input) {
 		System.out.println(input.get("Name"));
@@ -23,7 +22,6 @@ public class ReadExcelData {
 		System.out.println(input.get("Name"));
 	}
 
-	// @ExcelDetails(excelName = "Book1")
 	@Test(dataProvider = "data")
 	public void readExcelData_Test3(Map<String, String> input) {
 		System.out.println(input.get("Age"));
@@ -41,7 +39,6 @@ public class ReadExcelData {
 		System.out.println(input.get("EmpID"));
 	}
 
-	// @ExcelDetails(excelName = "Book1")
 	@Test(dataProvider = "data")
 	public void readExcelData_Test6(Map<String, String> input) {
 		System.out.println(input.get("EmpID"));
