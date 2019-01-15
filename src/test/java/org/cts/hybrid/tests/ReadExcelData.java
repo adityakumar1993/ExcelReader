@@ -3,8 +3,8 @@ package org.cts.hybrid.tests;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import org.cts.hybrid.ExcelReader.ExcelDataProvider;
 import org.cts.hybrid.annotation.ExcelDetails;
+import org.cts.hybrid.excelreader.ExcelDataProvider;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 

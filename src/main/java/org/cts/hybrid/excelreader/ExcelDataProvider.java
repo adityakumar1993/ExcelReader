@@ -1,4 +1,4 @@
-package org.cts.hybrid.ExcelReader;
+package org.cts.hybrid.excelreader;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -9,7 +9,7 @@ import org.cts.hybrid.annotation.ExcelDetails;
 
 public class ExcelDataProvider {
 
-	private static String[] excelDetailsValue = new String[2];
+	private String[] excelDetailsValue = new String[2];
 	private Map<String, String[]> methodExcelDetails = new HashMap<>();
 	private Class<?> obj = null;
 
@@ -54,10 +54,9 @@ public class ExcelDataProvider {
 	}
 
 	public Object[][] data(Method method) {
-		String[] methodExcelInfo = new String[2];
 		if (methodExcelDetails.get(method.getName())[0] != null
 				&& methodExcelDetails.get(method.getName())[1] != null) {
-			methodExcelInfo = methodExcelDetails.get(method.getName());
+			String[] methodExcelInfo = methodExcelDetails.get(method.getName());
 			return ReadExcel.readData(methodExcelInfo);
 		}
 		return ReadExcel.readData(excelDetailsValue);
