@@ -1,11 +1,11 @@
-package org.cts.hybrid.excelreader;
+package org.cts.oneframework.excelreader;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.cts.hybrid.annotation.ExcelDetails;
+import org.cts.oneframework.annotation.ExcelDetails;
 
 public class ExcelDataProvider {
 

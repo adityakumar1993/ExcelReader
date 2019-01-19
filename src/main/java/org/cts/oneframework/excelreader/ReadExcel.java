@@ -1,4 +1,4 @@
-package org.cts.hybrid.excelreader;
+package org.cts.oneframework.excelreader;
 
 import java.io.File;
 import java.io.FileInputStream;

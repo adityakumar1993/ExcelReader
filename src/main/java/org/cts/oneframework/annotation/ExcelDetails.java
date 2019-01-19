@@ -1,4 +1,4 @@
-package org.cts.hybrid.annotation;
+package org.cts.oneframework.annotation;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.TYPE;
