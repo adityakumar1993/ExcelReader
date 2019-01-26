@@ -30,6 +30,7 @@ public class ReadExcel {
 	}
 
 	private static void setup(String fileName, String sheetName) throws IOException {
+		
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		File folderPath = new File(loader.getResource("./data").getFile());
 		File xlsFile = new File(folderPath + File.separator + fileName + ".xls");
