@@ -9,6 +9,7 @@ import org.cts.oneframework.annotation.ExcelDetails;
 
 public class ExcelDataProvider {
 
+	
 	private String[] excelDetailsValue = new String[2];
 	private Map<String, String[]> methodExcelDetails = new HashMap<>();
 	private Class<?> obj = null;
