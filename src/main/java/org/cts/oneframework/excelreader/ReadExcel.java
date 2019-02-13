@@ -18,6 +18,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.cts.oneframework.exception.ExcelDetailException;
 
 public class ReadExcel {
 
@@ -30,7 +31,7 @@ public class ReadExcel {
 	}
 
 	private static void setup(String fileName, String sheetName) throws IOException {
-		
+
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		File folderPath = new File(loader.getResource("./data").getFile());
 		File xlsFile = new File(folderPath + File.separator + fileName + ".xls");
@@ -40,10 +41,14 @@ public class ReadExcel {
 		} else if (xlsxFile.exists()) {
 			fis = new FileInputStream(xlsxFile);
 		} else {
-			throw new IOException("ExcelDetails annotation may be missing or excel file/sheet doesn't exists.");
+			throw new ExcelDetailException("Excel Details are not correct. Trying to load excel '" + fileName + "' and sheet name '" + sheetName + "'. Either or both of which are not available/wrong.");
 		}
 		XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fis);
 		xssfSheet = xssfWorkbook.getSheet(sheetName);
+		if (xssfSheet == null) {
+			xssfWorkbook.close();
+			throw new ExcelDetailException("Excel Sheet name is not correct. Trying to load sheet '" + sheetName + "' from excel '" + fileName + "', which looks like not available.");
+		}
 		xssfWorkbook.close();
 	}
 

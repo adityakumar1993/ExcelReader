@@ -27,7 +27,7 @@ public class ReadExcelData {
 		System.out.println(input.get("Age"));
 	}
 
-	@ExcelDetails(excelName = "Book1")
+	@ExcelDetails(excelName="testdata", sheetName="data")
 	@Test(dataProvider = "data")
 	public void readExcelData_Test4(Map<String, String> input) {
 		System.out.println(input.get("Age"));
