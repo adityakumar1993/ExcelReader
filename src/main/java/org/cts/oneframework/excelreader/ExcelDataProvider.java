@@ -2,65 +2,54 @@ package org.cts.oneframework.excelreader;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.cts.oneframework.annotation.ExcelDetails;
 
 public class ExcelDataProvider {
 
-	
-	private String[] excelDetailsValue = new String[2];
-	private Map<String, String[]> methodExcelDetails = new HashMap<>();
-	private Class<?> obj = null;
+	private ThreadLocal<String> classExcelName = new ThreadLocal<>();
+	private ThreadLocal<String> classSheetName = new ThreadLocal<>();
+	private ThreadLocal<String> methodExcelName = new ThreadLocal<>();
+	private ThreadLocal<String> methodSheetName = new ThreadLocal<>();
+	private ThreadLocal<Class<?>> testClass = new ThreadLocal<>();
 
-	public ExcelDataProvider(Class<?> obj) {
-		this.obj = obj;
+	public ExcelDataProvider(Class<?> testClass) {
+		this.testClass.set(testClass);
 	}
 
 	private void getExcelDetailsFromClass() {
-		if (obj.isAnnotationPresent(ExcelDetails.class)) {
-			Annotation annotation = obj.getAnnotation(ExcelDetails.class);
+		if (testClass.get().isAnnotationPresent(ExcelDetails.class)) {
+			Annotation annotation = testClass.get().getAnnotation(ExcelDetails.class);
 			ExcelDetails excelDetails = (ExcelDetails) annotation;
 			if (excelDetails.excelName().isEmpty()) {
-				excelDetailsValue[0] = obj.getSimpleName();
+				classExcelName.set(testClass.get().getSimpleName());
 			} else {
-				excelDetailsValue[0] = excelDetails.excelName();
+				classExcelName.set(excelDetails.excelName());
 			}
-			excelDetailsValue[1] = excelDetails.sheetName();
+			classSheetName.set(excelDetails.sheetName());
 		}
 	}
 
-	private void getExcelDetailsFromMethod() {
-		Method[] methodList = obj.getDeclaredMethods();
-		for (Method method : methodList) {
-			String[] excelInfo = new String[2];
-			if (method.isAnnotationPresent(ExcelDetails.class)) {
-				Annotation annotation = method.getAnnotation(ExcelDetails.class);
-				ExcelDetails excelDetails = (ExcelDetails) annotation;
-				if (excelDetails.excelName().isEmpty()) {
-					excelInfo[0] = method.getName();
-				} else {
-					excelInfo[0] = excelDetails.excelName();
-				}
-				excelInfo[1] = excelDetails.sheetName();
+	private void getExcelDetailsFromMethod(Method method) {
+		if (method.isAnnotationPresent(ExcelDetails.class)) {
+			Annotation annotation = method.getAnnotation(ExcelDetails.class);
+			ExcelDetails excelDetails = (ExcelDetails) annotation;
+			if (excelDetails.excelName().isEmpty()) {
+				methodExcelName.set(method.getName());
+			} else {
+				methodExcelName.set(excelDetails.excelName());
 			}
-			methodExcelDetails.put(method.getName(), excelInfo);
+			methodSheetName.set(excelDetails.sheetName());
 		}
-	}
-
-	public void getExcelDetails() {
-		getExcelDetailsFromClass();
-		getExcelDetailsFromMethod();
 	}
 
 	public Object[][] data(Method method) {
-		if (methodExcelDetails.get(method.getName())[0] != null
-				&& methodExcelDetails.get(method.getName())[1] != null) {
-			String[] methodExcelInfo = methodExcelDetails.get(method.getName());
-			return ReadExcel.readData(methodExcelInfo);
+		getExcelDetailsFromMethod(method);
+		if (methodExcelName.get() != null && methodSheetName.get() != null) {
+			return ReadExcel.getData(methodExcelName.get(), methodSheetName.get());
 		}
-		return ReadExcel.readData(excelDetailsValue);
+		getExcelDetailsFromClass();
+		return ReadExcel.getData(classExcelName.get(), classSheetName.get());
 	}
 
 }

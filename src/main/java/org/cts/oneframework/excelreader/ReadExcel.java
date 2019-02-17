@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -30,37 +30,39 @@ public class ReadExcel {
 	private ReadExcel() {
 	}
 
-	private static void setup(String fileName, String sheetName) throws IOException {
+	private static void setup(String excelName, String sheetName) throws IOException {
 
+		if (excelName == null && sheetName == null) {
+			throw new ExcelDetailException("ExcelDetails annotation is missing. It must be called at either Method level or class level. If both available, method level will have the priority over class level.");
+
+		}
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		File folderPath = new File(loader.getResource("./data").getFile());
-		File xlsFile = new File(folderPath + File.separator + fileName + ".xls");
-		File xlsxFile = new File(folderPath + File.separator + fileName + ".xlsx");
+		File xlsFile = new File(folderPath + File.separator + excelName + ".xls");
+		File xlsxFile = new File(folderPath + File.separator + excelName + ".xlsx");
 		if (xlsFile.exists()) {
 			fis = new FileInputStream(xlsFile);
 		} else if (xlsxFile.exists()) {
 			fis = new FileInputStream(xlsxFile);
 		} else {
-			throw new ExcelDetailException("Excel Details are not correct. Trying to load excel '" + fileName + "' and sheet name '" + sheetName + "'. Either or both of which are not available/wrong.");
+			throw new ExcelDetailException("Excel Details are not correct. Trying to load excel '" + excelName + "' and sheet name '" + sheetName + "'. Either or both of which are not available/wrong.");
 		}
 		XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fis);
 		xssfSheet = xssfWorkbook.getSheet(sheetName);
 		if (xssfSheet == null) {
 			xssfWorkbook.close();
-			throw new ExcelDetailException("Excel Sheet name is not correct. Trying to load sheet '" + sheetName + "' from excel '" + fileName + "', which looks like not available.");
+			throw new ExcelDetailException("Excel Sheet name is not correct. Trying to load sheet '" + sheetName + "' from excel '" + excelName + "', which looks like not available.");
 		}
 		xssfWorkbook.close();
 	}
 
-	public static Object[][] readData(String[] excelInfo) {
-		String excelName = excelInfo[0];
-		String sheetName = excelInfo[1];
+	public static Object[][] getData(String excelName, String sheetName) {
 		List<Object[]> results = new ArrayList<>();
 		try {
 			setup(excelName, sheetName);
 			int numRows = xssfSheet.getLastRowNum();
 			for (int i = 1; i <= numRows; i++) {
-				Map<String, String> inputValues = getHashMapDataFromRow(xssfSheet, i);
+				Map<String, String> inputValues = getMapDataFromRow(xssfSheet, i);
 				results.add(new Object[] { inputValues });
 			}
 		} catch (IOException e) {
@@ -73,13 +75,13 @@ public class ReadExcel {
 		return results.toArray(new Object[0][]);
 	}
 
-	public static List<HashMap<String, String>> readData(String excelName, String sheetName) {
-		List<HashMap<String, String>> excelData = new ArrayList<>();
+	public static List<Map<String, String>> readData(String excelName, String sheetName) {
+		List<Map<String, String>> excelData = new ArrayList<>();
 		try {
 			setup(excelName, sheetName);
 			int numRows = xssfSheet.getLastRowNum();
 			for (int i = 1; i <= numRows; i++) {
-				HashMap<String, String> inputValues = getHashMapDataFromRow(xssfSheet, i);
+				Map<String, String> inputValues = getMapDataFromRow(xssfSheet, i);
 				excelData.add(inputValues);
 			}
 		} catch (IOException e) {
@@ -90,8 +92,8 @@ public class ReadExcel {
 		return excelData;
 	}
 
-	private static HashMap<String, String> getHashMapDataFromRow(Sheet sheet, int rowIndex) {
-		HashMap<String, String> results = new HashMap<>();
+	private static Map<String, String> getMapDataFromRow(Sheet sheet, int rowIndex) {
+		Map<String, String> results = new LinkedHashMap<>();
 		String[] columnHeaders = getDataFromRow(sheet, 0);
 		String[] valuesFromRow = getDataFromRow(sheet, rowIndex);
 		for (int i = 0; i < columnHeaders.length; i++) {
